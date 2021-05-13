@@ -1,0 +1,19 @@
+{
+    "id": "de9f7458-f64e-4b9d-8c86-b3460b90705f",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.19.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "Marcelo Schmidt",
+        "homepage": "https://github.com/marceloschmidt",
+        "support": "https://github.com/marceloschmidt/working-hours/issues"
+    },
+    "name": "Working Hours",
+    "nameSlug": "working-hours",
+    "classFile": "WorkingHoursApp.ts",
+    "description": "Set your working hours so you are not disturbed",
+    "implements": [
+        "IUIKitInteractionHandler",
+        "IPreMessageSentPrevent"
+    ]
+}
