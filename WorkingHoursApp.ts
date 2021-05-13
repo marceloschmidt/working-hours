@@ -80,12 +80,6 @@ export class WorkingHoursApp extends App implements IUIKitInteractionHandler, IP
         await configuration.slashCommands.provideSlashCommand(new WorkingHoursCommand(this));
         configuration.scheduler.registerProcessors([
             {
-                id: WorkingHoursEnum.CANCEL_JOB,
-                processor: async (jobContext, read, modify, http, persistence) => {
-                    await clearUserChoice(persistence, jobContext.id, jobContext.roomId);
-                },
-            },
-            {
                 id: 'setup',
                 startupSetting: {
                     type: StartupType.ONETIME,

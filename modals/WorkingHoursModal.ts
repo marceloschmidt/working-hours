@@ -2,6 +2,7 @@ import { IModify, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks';
 import { IUIKitModalViewParam } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { AppEnum } from '../enum/App';
 import { BlocksEnum } from '../enum/Blocks';
 import { WorkingHoursEnum } from '../enum/WorkingHours';
 import { getUIData, getWorkingHours } from '../helpers/persistence';
@@ -13,20 +14,20 @@ export async function WorkingHoursModal({ modify, read, user }: {
     user: IUser,
     data?: any,
 }): Promise<IUIKitModalViewParam> {
-    const viewId = WorkingHoursEnum.VIEW_ID;
+    const viewId = WorkingHoursEnum.ID;
     const uiData = (await getUIData(read.getPersistenceReader(), user.id))
-                   || ((await getWorkingHours(read.getPersistenceReader(), user.id))?.[WorkingHoursEnum.VIEW_ID])
+                   || ((await getWorkingHours(read.getPersistenceReader(), user.id))?.[WorkingHoursEnum.ID])
                    || {};
 
     const block = modify.getCreator().getBlockBuilder();
 
-    block.addSectionBlock({text: block.newMarkdownTextObject(`*${ WorkingHoursEnum.USE_WORKING_HOURS }*`)});
+    block.addSectionBlock({text: block.newMarkdownTextObject(`*${ WorkingHoursEnum.USE_WORKING_HOURS_LABEL }*`)});
     block.addActionsBlock({
-        blockId: WorkingHoursEnum.VIEW_ID,
+        blockId: WorkingHoursEnum.ID,
         elements: [
             block.newStaticSelectElement({
                 actionId: WorkingHoursEnum.USE_WORKING_HOURS_ACTION_ID,
-                placeholder: block.newPlainTextObject(WorkingHoursEnum.USE_WORKING_HOURS),
+                placeholder: block.newPlainTextObject(WorkingHoursEnum.USE_WORKING_HOURS_LABEL),
                 options: [{ text: { type: TextObjectType.PLAINTEXT, text: 'Yes' }, value: 'Yes' }, { text: { type: TextObjectType.PLAINTEXT, text: 'No' }, value: 'No' }],
                 initialValue: uiData[WorkingHoursEnum.USE_WORKING_HOURS_ACTION_ID] || 'No',
             }),
@@ -36,7 +37,7 @@ export async function WorkingHoursModal({ modify, read, user }: {
     if (uiData[WorkingHoursEnum.USE_WORKING_HOURS_ACTION_ID] === 'Yes') {
         block.addSectionBlock({text: block.newMarkdownTextObject(`*${ WorkingHoursEnum.DAYS_LABEL }*`)});
         block.addActionsBlock({
-            blockId: WorkingHoursEnum.VIEW_ID,
+            blockId: WorkingHoursEnum.ID,
             elements: [
                 block.newMultiStaticElement({
                     actionId: WorkingHoursEnum.DAYS_ACTION_ID,
@@ -60,17 +61,17 @@ export async function WorkingHoursModal({ modify, read, user }: {
             for (const day of uiData[WorkingHoursEnum.DAYS_ACTION_ID]) {
                 block.addSectionBlock({text: block.newMarkdownTextObject(`*${ weekDays[day].text }*`)});
                 block.addActionsBlock({
-                    blockId: WorkingHoursEnum.VIEW_ID,
+                    blockId: WorkingHoursEnum.ID,
                     elements: [
                         block.newStaticSelectElement({
                             actionId: `${ WorkingHoursEnum.FROM_ACTION_ID }#${ weekDays[day].value }`,
-                            placeholder: block.newPlainTextObject(WorkingHoursEnum.FROM),
+                            placeholder: block.newPlainTextObject(WorkingHoursEnum.FROM_LABEL),
                             options: hours,
                             initialValue: uiData[`${WorkingHoursEnum.FROM_ACTION_ID}#${day}`] || '',
                         }),
                         block.newStaticSelectElement({
                             actionId: `${ WorkingHoursEnum.TO_ACTION_ID }#${ weekDays[day].value }`,
-                            placeholder: block.newPlainTextObject(WorkingHoursEnum.TO),
+                            placeholder: block.newPlainTextObject(WorkingHoursEnum.TO_LABEL),
                             options: [...hours.slice(1), { text: { type: TextObjectType.PLAINTEXT, text: `23:59` }, value: `23:59` } ],
                             initialValue: uiData[`${WorkingHoursEnum.TO_ACTION_ID}#${day}`] || '',
                         }),
@@ -84,7 +85,7 @@ export async function WorkingHoursModal({ modify, read, user }: {
         id: viewId,
         title: {
             type: TextObjectType.PLAINTEXT,
-            text: WorkingHoursEnum.DEFAULT_TITLE,
+            text: AppEnum.DEFAULT_TITLE,
         },
         submit: block.newButtonElement({
             text: {

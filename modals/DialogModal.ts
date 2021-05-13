@@ -1,8 +1,8 @@
 import { IModify } from '@rocket.chat/apps-engine/definition/accessors';
 import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks';
 import { IUIKitModalViewParam } from '@rocket.chat/apps-engine/definition/uikit/UIKitInteractionResponder';
+import { AppEnum } from '../enum/App';
 import { BlocksEnum } from '../enum/Blocks';
-import { WorkingHoursEnum } from '../enum/WorkingHours';
 
 export async function dialogModal({ title, text, modify }: {
     title?: string,
@@ -18,7 +18,7 @@ export async function dialogModal({ title, text, modify }: {
         id: viewId,
         title: {
             type: TextObjectType.PLAINTEXT,
-            text: title || WorkingHoursEnum.DEFAULT_TITLE,
+            text: title || AppEnum.DEFAULT_TITLE,
         },
         close: block.newButtonElement({
             text: {

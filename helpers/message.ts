@@ -4,6 +4,7 @@ import { IMessageAttachment } from '@rocket.chat/apps-engine/definition/messages
 import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
 import { BlockBuilder } from '@rocket.chat/apps-engine/definition/uikit';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
+import { AppEnum } from '../enum/App';
 import { Logs } from '../enum/Logs';
 import { WorkingHoursEnum } from '../enum/WorkingHours';
 
@@ -38,8 +39,8 @@ export const notifyUser = async ({ app, read, modify, room, user, text, attachme
     const msg = modify.getCreator().startMessage()
         .setGroupable(false)
         .setSender(appUser)
-        .setUsernameAlias(WorkingHoursEnum.USERNAME_ALIAS)
-        .setEmojiAvatar(WorkingHoursEnum.EMOJI_AVATAR)
+        .setUsernameAlias(AppEnum.USERNAME_ALIAS)
+        .setEmojiAvatar(AppEnum.EMOJI_AVATAR)
         .setRoom(room);
 
     if (text && text.length > 0) {

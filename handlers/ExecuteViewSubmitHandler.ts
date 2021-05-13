@@ -16,11 +16,11 @@ export class ExecuteViewSubmitHandler {
     public async run(context: UIKitViewSubmitInteractionContext) {
         const data = context.getInteractionData();
         const state = Object.assign({}, { utcOffset: data.user.utcOffset }, data.view.state);
-        if (state[WorkingHoursEnum.VIEW_ID]?.[WorkingHoursEnum.DAYS_ACTION_ID]) {
-            state[WorkingHoursEnum.VIEW_ID][WorkingHoursEnum.DAYS_ACTION_ID] = state[WorkingHoursEnum.VIEW_ID][WorkingHoursEnum.DAYS_ACTION_ID].sort((a, b) => a > b ? 1 : -1);
+        if (state[WorkingHoursEnum.ID]?.[WorkingHoursEnum.DAYS_ACTION_ID]) {
+            state[WorkingHoursEnum.ID][WorkingHoursEnum.DAYS_ACTION_ID] = state[WorkingHoursEnum.ID][WorkingHoursEnum.DAYS_ACTION_ID].sort((a, b) => a > b ? 1 : -1);
         }
         switch (data.view.id) {
-            case WorkingHoursEnum.VIEW_ID: {
+            case WorkingHoursEnum.ID: {
                 await persistWorkingHours(this.persistence, data.user.id, state);
                 await clearUIData(this.persistence, data.user.id);
                 break;
