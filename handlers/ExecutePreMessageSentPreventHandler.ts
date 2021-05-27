@@ -24,10 +24,12 @@ export class ExecutePreMessageSentPreventHandler {
             const checkUser = userIds[userIds.indexOf(message.sender.id) === 0 ? 1 : 0];
             if (checkUser) {
                 const workingHours = await getWorkingHours(this.read.getPersistenceReader(), checkUser);
+                this.app.getLogger().log('Working hours ->', JSON.stringify(workingHours));
                 if (workingHours?.[WorkingHoursEnum.ID]?.[WorkingHoursEnum.USE_WORKING_HOURS_ACTION_ID] === 'Yes') {
                     const sendAnyway = await getUserChoice(this.read.getPersistenceReader(), message.sender.id, message.room.id);
                     // Checks if user has clicked to send message anyway in the past TIMEOUT_MINUTES
                     const now = new Date();
+                    this.app.getLogger().log('Send anyway ->', JSON.stringify(sendAnyway));
                     if (sendAnyway?.sendMessage) {
                         if ((now.getTime() - sendAnyway.timestamp) / (1000 * 60) > parseInt(AppEnum.TIMEOUT_MINUTES, 10)) {
                             await clearUserChoice(this.persistence, message.sender.id, message.room.id);
@@ -46,6 +48,7 @@ export class ExecutePreMessageSentPreventHandler {
                         if (days.indexOf(destinationDay) !== -1) {
                             const destinationFromTime = workingHours[WorkingHoursEnum.ID][`${ WorkingHoursEnum.FROM_ACTION_ID }#${destinationDay}`];
                             const destinationToTime = workingHours[WorkingHoursEnum.ID][`${ WorkingHoursEnum.TO_ACTION_ID }#${destinationDay}`];
+                            this.app.getLogger().log('Time check ->', destinationFromTime, destinationTime, destinationToTime);
                             console.log(destinationFromTime, destinationTime, destinationToTime, destinationFromTime < destinationTime, destinationToTime > destinationTime);
                             if (destinationFromTime > destinationTime || destinationToTime < destinationTime) {
                                 prevent = true;

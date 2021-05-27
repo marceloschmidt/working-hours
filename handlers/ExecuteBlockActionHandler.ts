@@ -7,7 +7,7 @@ import { ErrorsEnum } from '../enum/Errors';
 import { ViewHoursEnum } from '../enum/ViewHours';
 import { WorkingHoursEnum } from '../enum/WorkingHours';
 import { notifyUser, sendMessage } from '../helpers/message';
-import { getUIData, getWorkingHours, persistUIData, persistUserChoice } from '../helpers/persistence';
+import { getUIData, getUserChoice, getWorkingHours, persistUIData, persistUserChoice } from '../helpers/persistence';
 import { weekDays } from '../helpers/weekDays';
 import { dialogModal } from '../modals/DialogModal';
 import { ViewHoursModal } from '../modals/ViewHoursModal';
@@ -51,18 +51,22 @@ export class ExecuteBlockActionHandler {
                 data[WorkingHoursEnum.TO_ACTION_ID][subAction] = value;
                 break;
             case WorkingHoursEnum.SEND_MESSAGE_ACTION_ID:
-                await persistUserChoice(this.persistence, contextData.user.id, contextData.room?.id);
-                // tslint:disable-next-line:max-line-length
-                const blocks = this.modify.getCreator().getBlockBuilder();
-                blocks.addSectionBlock({
-                    text: {
-                        type: TextObjectType.MARKDOWN,
-                        text: AppEnum.TIMEOUT_MESSAGE,
-                    },
-                });
-                await notifyUser({ app: this.app, read: this.read, modify: this.modify, room: contextData.room as IRoom, user: contextData.user, blocks });
-                // tslint:disable-next-line:max-line-length
-                await sendMessage({ app: this.app, read: this.read, modify: this.modify, room: contextData.room as IRoom, user: contextData.user, text: contextData.value });
+                const sendAnyway = await getUserChoice(this.read.getPersistenceReader(), contextData.user.id, contextData.room?.id);
+                this.app.getLogger().log('Send Anyway -> ', JSON.stringify(sendAnyway));
+                if (!sendAnyway?.sendMessage) {
+                    await persistUserChoice(this.persistence, contextData.user.id, contextData.room?.id);
+                    // tslint:disable-next-line:max-line-length
+                    const blocks = this.modify.getCreator().getBlockBuilder();
+                    blocks.addSectionBlock({
+                        text: {
+                            type: TextObjectType.MARKDOWN,
+                            text: AppEnum.TIMEOUT_MESSAGE + JSON.stringify(sendAnyway),
+                        },
+                    });
+                    await notifyUser({ app: this.app, read: this.read, modify: this.modify, room: contextData.room as IRoom, user: contextData.user, blocks });
+                    // tslint:disable-next-line:max-line-length
+                    await sendMessage({ app: this.app, read: this.read, modify: this.modify, room: contextData.room as IRoom, user: contextData.user, text: contextData.value });
+                }
                 return context.getInteractionResponder().successResponse();
             case ViewHoursEnum.ACTION:
                 const userIds = contextData.room?.userIds;

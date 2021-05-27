@@ -63,7 +63,7 @@ export class WorkingHoursApp extends App implements IUIKitInteractionHandler, IP
     }
 
     public async checkPreMessageSentPrevent(message: IMessage, read: IRead, http: IHttp): Promise<boolean> {
-        return message.room.type === RoomType.DIRECT_MESSAGE;
+        return message.room.type === RoomType.DIRECT_MESSAGE && message.room.userIds?.length === 2; // Do not run on multi-dm
     }
 
     public async executePreMessageSentPrevent(message: IMessage, read: IRead, http: IHttp, persistence: IPersistence): Promise<boolean> {
@@ -83,9 +83,10 @@ export class WorkingHoursApp extends App implements IUIKitInteractionHandler, IP
                 id: 'setup',
                 startupSetting: {
                     type: StartupType.ONETIME,
-                    when: '1 second'
+                    when: '1 minute'
                 },
                 processor: async (jobContext, read, modify, http, persistence) => {
+                    this.getLogger().log('Processor run');
                     this.modify = modify;
                 },
             },
