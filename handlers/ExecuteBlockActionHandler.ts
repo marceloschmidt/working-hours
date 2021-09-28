@@ -60,7 +60,7 @@ export class ExecuteBlockActionHandler {
                     blocks.addSectionBlock({
                         text: {
                             type: TextObjectType.MARKDOWN,
-                            text: AppEnum.TIMEOUT_MESSAGE + JSON.stringify(sendAnyway),
+                            text: AppEnum.TIMEOUT_MESSAGE,
                         },
                     });
                     await notifyUser({ app: this.app, read: this.read, modify: this.modify, room: contextData.room as IRoom, user: contextData.user, blocks });
